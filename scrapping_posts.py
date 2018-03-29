@@ -122,8 +122,8 @@ for i in range(0, df_thread.shape[0]):
     
     #recover creation time , keyword in thread datasets
     
-    df_thread.set_value(i,'time', new_thread_posts[new_thread_posts['number']==1]['time'].values[0])
-    df_thread.set_value(i,'keywords', keywords)
+    df_thread.loc[i,'time']= new_thread_posts[new_thread_posts['number']==1]['time'].values[0]
+    df_thread.loc[i,'keywords']= keywords
     
     #print(df_thread.head())
 
