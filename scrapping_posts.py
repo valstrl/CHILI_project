@@ -124,6 +124,7 @@ for i in range(0, df_thread.shape[0]):
         print('--In while loop--')
         print('last post number:{}'.format(int(new_thread_posts.tail(1)['number'])))
         print('thread size:{}'.format(int(thread['size'] +1)))
+        print('thread url ' + str(thread['link']))
         #try again
         new_thread_posts=pd.DataFrame()
         new_thread_posts, keywords= processPosts(thread['link'],new_thread_posts)
