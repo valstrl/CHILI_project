@@ -120,14 +120,14 @@ for i in range(0, df_thread.shape[0]):
     new_thread_posts, keywords= processPosts(thread['link'],new_thread_posts)
     
     #if all the post are not scrapped
-    if int(new_thread_posts.tail(1)['number']) != int(thread['size'] +1):
+    '''if int(new_thread_posts.tail(1)['number']) != int(thread['size'] +1):
         print('--In while loop--')
         print('last post number:{}'.format(int(new_thread_posts.tail(1)['number'])))
         print('thread size:{}'.format(int(thread['size'] +1)))
         print('thread url ' + str(thread['link']))
         #try again
         new_thread_posts=pd.DataFrame()
-        new_thread_posts, keywords= processPosts(thread['link'],new_thread_posts)
+        new_thread_posts, keywords= processPosts(thread['link'],new_thread_posts)'''
            
     new_thread_posts['Thread ID'] =thread['ID']
     df_posts =df_posts.append(new_thread_posts)
