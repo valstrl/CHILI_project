@@ -27,7 +27,12 @@ def processPosts(url, df):
     while found_next== True:
     
         ''' take the data from an html file and append to our csv file '''
-        page= requests.get( url)
+        try:
+            page= requests.get( url)
+        except ConnectionError:
+            print('--ConnectionError--')
+            return df, keywords
+        
         soup= BeautifulSoup(page.text,'html.parser')
 
         postData = soup.find_all(id="posts")
@@ -109,10 +114,17 @@ df_thread=pd.read_csv('threads.csv')
 for i in range(0, df_thread.shape[0]):
       
     thread=df_thread.copy().reset_index().iloc[i]
-    #print(thread['link'])
     
     new_thread_posts=pd.DataFrame()
     new_thread_posts, keywords= processPosts(thread['link'],new_thread_posts)
+    
+    #if all the post are not scrapped
+    while int(new_thread_posts.tail(1)['number']) != int(thread['size'] +1):
+        print('--In while loop--')
+        #try again
+        new_thread_posts=pd.DataFrame()
+        new_thread_posts, keywords= processPosts(thread['link'],new_thread_posts)
+           
     new_thread_posts['Thread ID'] =thread['ID']
     df_posts =df_posts.append(new_thread_posts)
     #print(df_thread.head())
@@ -137,4 +149,6 @@ print("End writing post")
 csvFile = "threads.csv"
 df_thread.to_csv(csvFile)
 print("End writing threads...")
+
+
 
