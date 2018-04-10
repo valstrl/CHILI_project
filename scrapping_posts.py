@@ -31,7 +31,8 @@ def processPosts(url, df):
             page= requests.get( url)
         except ConnectionError:
             print('--ConnectionError--')
-            return df, keywords
+            print(url)
+            break
         
         soup= BeautifulSoup(page.text,'html.parser')
 
@@ -121,6 +122,8 @@ for i in range(0, df_thread.shape[0]):
     #if all the post are not scrapped
     while int(new_thread_posts.tail(1)['number']) != int(thread['size'] +1):
         print('--In while loop--')
+        print('last post number:{}'.format(int(new_thread_posts.tail(1)['number'])))
+        print('thread size:{}'.format(int(thread['size'] +1)))
         #try again
         new_thread_posts=pd.DataFrame()
         new_thread_posts, keywords= processPosts(thread['link'],new_thread_posts)
