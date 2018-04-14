@@ -24,26 +24,33 @@ def processThread( url, df ):
 
     folderData = soup.find_all("td",{"class":"alt1Active"})
     
+    folderNames = [x.find_all("strong")[0].get_text()  for x in folderData]
     folderURLs=[ url + x.find_all("a")[0]["href"]  for x in folderData]
+    
+    #print('Folders names')
+    #print(folderNames)
 
     #print(len(folderData)) = 27 ! OK!  
-    for url in folderURLs:
+    for i, url in enumerate(folderURLs):
         found_next=True
         page_nb = 0
         print(url)
         
-        while found_next == True: #and page_nb != 3:
+        while found_next == True or thread_number <= 150: #and page_nb != 3:
             page= requests.get( url)
             soup= BeautifulSoup(page.text,'html.parser')
+            folder=folderNames[i]
 
             threadData= soup.find_all("tbody",id=re.compile("^threadbits_forum_"))[0].find_all("tr")
 
             titles = []
             links=[]
             authors = []
+            
+            
             #creation_times=[]
             #keywords=[]
-
+            thread_number=0
             for thread in threadData:
                 try:
                     #print(thread.find_all("td", {"class": "alt1 number-post"})[0].get_text())
@@ -63,8 +70,10 @@ def processThread( url, df ):
 
                     thread_link= forum +thread.find(id=re.compile("^thread_title_"))["href"] 
                     df = df.append(pd.DataFrame([[thread_id,'',thread_author,thread_title,thread_link, thread_size]],columns=['ID','time', 'author', 'title', 'link', 'size']), ignore_index=True)
-
-            
+                    thread_number= thread_number+1
+            df['folder']=folder
+            df['folder_number']=i
+            #print(thread_number)
             nextPage= soup.find_all("a",{"rel": "next"})
             if len(nextPage)==0:
                 found_next= False 
@@ -73,7 +82,7 @@ def processThread( url, df ):
                 url= forum + nextPage[0]['href']
     return df
 
-df_thread= pd.DataFrame(columns=['ID','time', 'author', 'title', 'link', 'keywords','size'])
+df_thread= pd.DataFrame(columns=['ID','time','folder','folder_number', 'author', 'title', 'link', 'keywords','size'])
 
 forum='http://forums.thefashionspot.com'
 path=forum
@@ -86,4 +95,6 @@ print("End processing  threads from " + path +")...")
 csvFile = "threads.csv"
 df_thread.to_csv(csvFile)
 print("End writing threads...")
+
+
 
