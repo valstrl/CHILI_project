@@ -37,7 +37,12 @@ def processThread( url, df ):
         print(url)
         
         while found_next == True or thread_number <= 150: #and page_nb != 3:
-            page= requests.get( url)
+            try:
+                page= requests.get( url)
+            except:
+                print('BREAK')
+                print(url)
+                break
             soup= BeautifulSoup(page.text,'html.parser')
             folder=folderNames[i]
 
